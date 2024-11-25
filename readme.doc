@@ -1,5 +1,5 @@
 Workflow:
-1) The user will be greeted with a form to fill in the contents of the post as well as upload the image (one or many) and select the main image. @xyz.com/CMS
+1) The user will be greeted with a form to fill in the contents of the post as well as upload the image (one or many) and select the main image. @xyz.com/
 2) After uploaded the user will have a success or a failure message.
 3) If the post was successfully uploaded the user can see the post at xyz.com/display_posts.php
 4) The user can edit or delete the existing posts by going to xyz.com/list_posts.php where the posts that have been successfully uploaded will be listed.
