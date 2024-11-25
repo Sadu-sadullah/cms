@@ -23,8 +23,10 @@ while ($row = $stmt->fetch()) {
         $posts[$postId]['images'][] = $row['image_path'];
     }
 }
-?>
 
+// Check if the status parameter is set in the URL
+$status = isset($_GET['status']) ? $_GET['status'] : '';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -159,12 +161,47 @@ while ($row = $stmt->fetch()) {
         </div>
     </div>
 
+    <!-- Bootstrap Modal for Notifications -->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Notification</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Status message will be populated by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Lightbox JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var status = "<?php echo $status; ?>"; // Get status from PHP
+
+            // Display Bootstrap modal based on the status
+            if (status === "success") {
+                $('.modal-body').text('Post created successfully!');
+                $('#statusModal').modal('show');
+            } else if (status === "error") {
+                $('.modal-body').text('There was an error while creating the post.');
+                $('#statusModal').modal('show');
+            }
+        });
+    </script>
 </body>
 
 </html>

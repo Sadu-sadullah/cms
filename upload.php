@@ -1,5 +1,6 @@
 <?php
 require 'config.php'; // Include the PDO configuration file
+session_start(); // Start the session to handle success/error messages
 
 // Directory to store images
 $targetDir = "uploads/";
@@ -48,12 +49,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmtUpdateMainImage = $pdo->prepare("UPDATE posts SET main_image = :main_image WHERE id = :id");
                 $stmtUpdateMainImage->execute(['main_image' => $mainImagePath, 'id' => $postId]);
             }
-        }
 
-        echo "<div class='container mt-5'><div class='alert alert-success'>Blog post created successfully!</div></div>";
+            // Redirect to list_posts.php with success status
+            header("Location: display_posts.php?status=success");
+        } else {
+            // Redirect to list_posts.php with error status if no images were uploaded
+            header("Location: display_posts.php?status=error");
+        }
+        exit();
     } catch (PDOException $e) {
         // Handle any database errors
-        echo "<div class='container mt-5'><div class='alert alert-danger'>Database error: " . $e->getMessage() . "</div></div>";
+        header("Location: display_posts.php?status=error");
+        exit(); // Redirect on error
     }
 }
 ?>
