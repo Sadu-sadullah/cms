@@ -2,7 +2,7 @@
 require 'config.php';
 
 // Fetch trashed posts
-$sql = "SELECT * FROM posts WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC";
+$sql = "SELECT * FROM posts WHERE status = 'trashed' ORDER BY post_date DESC";
 $stmt = $pdo->query($sql);
 $trashedPosts = $stmt->fetchAll();
 ?>

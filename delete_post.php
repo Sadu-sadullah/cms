@@ -3,7 +3,14 @@ require 'config.php';
 
 if (isset($_GET['id'])) {
     $postId = $_GET['id'];
-    $sql = "UPDATE posts SET deleted_at = NOW() WHERE id = ?";
+    $sql = "UPDATE posts SET status = 'trashed' WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => $postId]);
+
+    // Update associated images to 'trashed'
+    $sqlImages = "UPDATE post_images SET status = 'trashed' WHERE post_id = :id";
+    $stmtImages = $pdo->prepare($sqlImages);
+    $stmtImages->execute(['id' => $postId]);
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([$postId])) {
         // Redirect with success message
