@@ -10,12 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $title = $_POST["title"];
     $content = $_POST["content"];
     $mainImageFileName = $_POST["main_image"]; // Get the main image file name selected in the form
-    $status = 'draft'; // Default status for new posts
 
     try {
         // Insert the post details into the posts table
-        $stmt = $pdo->prepare("INSERT INTO posts (title, content, status) VALUES (:title, :content, :status)");
-        $stmt->execute(['title' => $title, 'content' => $content, 'status' => $status]);
+        $stmt = $pdo->prepare("INSERT INTO posts (title, content) VALUES (:title, :content)");
+        $stmt->execute(['title' => $title, 'content' => $content]);
         $postId = $pdo->lastInsertId(); // Get the ID of the newly created post
 
         // Check if files were uploaded without errors
@@ -45,16 +44,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
             }
 
-            // Update the main image path and status in the posts table
+            // Update the main image path in the posts table
             if (!empty($mainImagePath)) {
-                $stmtUpdateMainImage = $pdo->prepare("UPDATE posts SET main_image = :main_image, status = :status WHERE id = :id");
-                $stmtUpdateMainImage->execute(['main_image' => $mainImagePath, 'status' => $status, 'id' => $postId]);
+                $stmtUpdateMainImage = $pdo->prepare("UPDATE posts SET main_image = :main_image WHERE id = :id");
+                $stmtUpdateMainImage->execute(['main_image' => $mainImagePath, 'id' => $postId]);
             }
 
-            // Redirect to display_posts.php with success status
+            // Redirect to list_posts.php with success status
             header("Location: display_posts.php?status=success");
         } else {
-            // Redirect to display_posts.php with error status if no images were uploaded
+            // Redirect to list_posts.php with error status if no images were uploaded
             header("Location: display_posts.php?status=error");
         }
         exit();
