@@ -1,23 +1,23 @@
 <?php
 require 'config.php';
 
-// Fetch active posts
-$sql = "SELECT * FROM posts WHERE deleted_at IS NULL ORDER BY post_date DESC";
+// Fetch trashed posts
+$sql = "SELECT * FROM posts WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC";
 $stmt = $pdo->query($sql);
-$posts = $stmt->fetchAll();
+$trashedPosts = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List Posts</title>
+    <title>Trash</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
-    <h2 class="mb-4">Posts</h2>
+    <h2 class="mb-4">Trash</h2>
 
     <!-- Display success or error messages -->
     <?php if (isset($_GET['message'])): ?>
@@ -31,32 +31,29 @@ $posts = $stmt->fetchAll();
         </div>
     <?php endif; ?>
 
-    <!-- Add navigation to Trash page -->
-    <a href="trash.php" class="btn btn-warning mb-3">View Trash</a>
-
-    <!-- List active posts -->
-    <?php if (!empty($posts)): ?>
+    <?php if (!empty($trashedPosts)): ?>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Content</th>
-                    <th>Date</th>
+                    <th>Deleted On</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($posts as $post): ?>
+            <?php foreach ($trashedPosts as $post): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($post['title']); ?></td>
-                    <td><?php echo substr(htmlspecialchars($post['content']), 0, 50) . '...'; ?></td>
-                    <td><?php echo date('F j, Y', strtotime($post['post_date'])); ?></td>
+                    <td><?php echo date('F j, Y, g:i a', strtotime($post['deleted_at'])); ?></td>
                     <td>
-                        <!-- Move to Trash button -->
-                        <a href="delete_post.php?id=<?php echo $post['id']; ?>" 
+                        <!-- Restore and Permanent Delete Buttons -->
+                        <a href="restore_post.php?id=<?php echo $post['id']; ?>" class="btn btn-success btn-sm">
+                            Restore
+                        </a>
+                        <a href="permanent_delete_post.php?id=<?php echo $post['id']; ?>" 
                            class="btn btn-danger btn-sm" 
-                           onclick="return confirm('Are you sure you want to move this post to Trash?');">
-                            Move to Trash
+                           onclick="return confirm('Are you sure you want to permanently delete this post?');">
+                            Delete Permanently
                         </a>
                     </td>
                 </tr>
@@ -64,7 +61,7 @@ $posts = $stmt->fetchAll();
             </tbody>
         </table>
     <?php else: ?>
-        <p class="alert alert-info">No posts available.</p>
+        <p class="alert alert-info">No posts in Trash.</p>
     <?php endif; ?>
 </div>
 
