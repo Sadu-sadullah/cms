@@ -3,7 +3,7 @@ require 'config.php';
 
 if (isset($_GET['id'])) {
     $postId = $_GET['id'];
-    $sql = "UPDATE posts SET deleted_at = NULL WHERE id = ?";
+    $sql = "UPDATE posts SET status = 'active' WHERE id = ?";
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([$postId])) {
         // Redirect with success message
