@@ -3,9 +3,11 @@ require 'config.php';
 
 // Fetch posts and associated images from the database
 $sql = "SELECT posts.id, posts.title, posts.content, posts.post_date, posts.main_image, post_images.image_path 
-        FROM posts 
-        LEFT JOIN post_images ON posts.id = post_images.post_id 
-        ORDER BY posts.post_date DESC";
+FROM posts 
+LEFT JOIN post_images ON posts.id = post_images.post_id 
+WHERE posts.status != 'trashed' 
+ORDER BY posts.post_date DESC;
+";
 $stmt = $pdo->query($sql);
 
 $posts = [];
@@ -101,8 +103,8 @@ $status = isset($_GET['status']) ? $_GET['status'] : '';
                                         class="position-relative d-block">
 
                                         <!-- Main Image to be displayed -->
-                                        <img src="<?php echo htmlspecialchars($post['main_image']); ?>"
-                                            class="card-img-top mb-2" alt="Main Post Image">
+                                        <img src="<?php echo htmlspecialchars($post['main_image']); ?>" class="card-img-top mb-2"
+                                            alt="Main Post Image">
 
                                         <!-- Show overlay only on the main image -->
                                         <div class="overlay">
@@ -136,8 +138,7 @@ $status = isset($_GET['status']) ? $_GET['status'] : '';
                                     foreach ($post['images'] as $imagePath) { ?>
                                         <a href="<?php echo htmlspecialchars($imagePath); ?>"
                                             data-lightbox="post-<?php echo $postId; ?>"
-                                            data-title="<?php echo htmlspecialchars($post['title']); ?>"
-                                            class="d-none">
+                                            data-title="<?php echo htmlspecialchars($post['title']); ?>" class="d-none">
                                             <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Gallery Image">
                                         </a>
                                     <?php } ?>
@@ -189,7 +190,7 @@ $status = isset($_GET['status']) ? $_GET['status'] : '';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var status = "<?php echo $status; ?>"; // Get status from PHP
 
             // Display Bootstrap modal based on the status
